@@ -28,15 +28,19 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	public GamePanel() {
 		//mana = new TileManager();
 		setLayout(new GridLayout(Minesweeper.SIDES, Minesweeper.SIDES));
-		for (int i = 0; i < tiles.length; i++) {
-			
-			tiles[i] = new Tile(rand.nextInt(2));
-			add(tiles[i].label);
-			tiles[i].label.addMouseListener(this);
-			tiles[i].label.setHorizontalAlignment(JLabel.CENTER);
-			tiles[i].label.setVerticalAlignment(JLabel.CENTER);
-			tiles[i].label.setText("" + i);
-			tiles[i].label.setBorder(border);
+		int tile = 0;
+		for (int row = 0; row < Minesweeper.SIDES; row++) {
+			for (int col = 0; col < Minesweeper.SIDES; col++) {
+				tiles[tile] = new Tile(rand.nextInt(2), row, col);
+				System.out.println(tiles[tile].type);
+				add(tiles[tile].label);
+				tiles[tile].label.addMouseListener(this);
+				tiles[tile].label.setHorizontalAlignment(JLabel.CENTER);
+				tiles[tile].label.setVerticalAlignment(JLabel.CENTER);
+				//tiles[i].label.setText("" + i);
+				tiles[tile].label.setBorder(border);
+				tile++;
+			}
 		}
 	}
 	
@@ -80,36 +84,41 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 		for (int i = 0; i < tiles.length; i++) {
 			if(tiles[i].label == label) {
 				activeTile = tiles[i];
-				if(tiles[i-1].type == 2) {
-					tiles[i].bombsAround++;
-				}
-				if(tiles[i+1].type == 2) {
-					tiles[i].bombsAround++;
-				}
-				if(tiles[i-Minesweeper.SIDES].type == 2) {
-					tiles[i].bombsAround++;
-				}
-				if(tiles[i-1-Minesweeper.SIDES].type == 2) {
-					tiles[i].bombsAround++;
-				}
-				if(tiles[i+1-Minesweeper.SIDES].type == 2) {
-					tiles[i].bombsAround++;
-				}
-				if(tiles[i-1+Minesweeper.SIDES].type == 2) {
-					tiles[i].bombsAround++;
-				}
-				if(tiles[i+Minesweeper.SIDES].type == 2) {
-					tiles[i].bombsAround++;
-				}
-				if(tiles[i+1+Minesweeper.SIDES].type == 2) {
-					tiles[i].bombsAround++;
-				}
-				if(tiles[i].bombsAround==0) {
+				if(tiles[i].type == 1 && !tiles[i].clicked) {
 					tiles[i].label.setText("Bomb");
+					tiles[i].clicked = true;
 				}
-				if(tiles[i].bombsAround>0) {
-					tiles[i].label.setText("" + tiles[i].bombsAround);
+				else if(tiles[i].type == 0 && !tiles[i].clicked) {
+					if(tiles[i].row + tiles[i].col>0 && tiles[i-1].type == 1) {
+						tiles[i].bombsAround++;
+					}
+					if(tiles[i].row + tiles[i].col<Minesweeper.SIDES*2 && tiles[i+1].type == 1) {
+						tiles[i].bombsAround++;
+					}
+					if(tiles[i].row > 0 && tiles[i-Minesweeper.SIDES].type == 1) {
+						tiles[i].bombsAround++;
+					}
+					if(tiles[i].row>0 && tiles[i].col>0 && tiles[i-1-Minesweeper.SIDES].type == 1) {
+						tiles[i].bombsAround++;
+					}
+					if(tiles[i].col<Minesweeper.SIDES && tiles[i].row>0 && tiles[i+1-Minesweeper.SIDES].type == 1) {
+						tiles[i].bombsAround++;
+					}
+					if(tiles[i].row<Minesweeper.SIDES && tiles[i].col>0 && tiles[i-1+Minesweeper.SIDES].type == 1) {
+						tiles[i].bombsAround++;
+					}
+					if( tiles[i].row<Minesweeper.SIDES && tiles[i+Minesweeper.SIDES].type == 1) {
+						tiles[i].bombsAround++;
+					}
+					if(tiles[i].row<Minesweeper.SIDES && tiles[i].col<Minesweeper.SIDES && tiles[i+1+Minesweeper.SIDES].type == 1) {
+						tiles[i].bombsAround++;
+					}
+					if(tiles[i].bombsAround>0) {
+						tiles[i].label.setText("" + tiles[i].bombsAround);
+					}
+					tiles[i].clicked = true;
 				}
+				
 				
 			}
 			
