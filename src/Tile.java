@@ -11,6 +11,7 @@ public class Tile {
 	int bombsAround;
 	int type;
 	boolean clicked;
+	boolean flagged;
 	
 	//Constructor
 	public Tile(int type, int row, int col) {
@@ -20,6 +21,7 @@ public class Tile {
 		int bombsAround = 0;
 		this.type = type;
 		clicked = false;
+		flagged = false;
 	}
 	
 	public void draw(Graphics g) {

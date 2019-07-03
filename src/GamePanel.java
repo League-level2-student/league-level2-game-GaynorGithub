@@ -12,6 +12,7 @@ import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
@@ -28,24 +29,26 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	Random rand = new Random();
 	JLabel label;
 	JLabel label2;
+	int totalBombs;
+	
 	
 	//Constructor
 	public GamePanel() {
 		//mana = new TileManager();
-		int totalBombs = 0;
+		
 		//add(label = new JLabel("Total Bombs: " + totalBombs));
 		JPanel panel = new JPanel();
-		add(panel);
-		panel.add(label2 = new JLabel("Total Bombs: " + totalBombs));
 		setLayout(new GridLayout(Minesweeper.SIDES, Minesweeper.SIDES));
 		int tile = 0;
-		
+		totalBombs = 0;
 		
 		for (int row = 0; row < Minesweeper.SIDES; row++) {
 			for (int col = 0; col < Minesweeper.SIDES; col++) {
 				tiles[tile] = new Tile(rand.nextInt(6), row, col);
-				System.out.println(tiles[tile].type);
 				add(tiles[tile].label);
+				if(tiles[tile].type == 1) {
+					totalBombs++;
+				}
 				tiles[tile].label.addMouseListener(this);
 				tiles[tile].label.setHorizontalAlignment(JLabel.CENTER);
 				tiles[tile].label.setVerticalAlignment(JLabel.CENTER);
@@ -57,6 +60,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 				tile++;
 			}
 		}
+		System.out.println(totalBombs);
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -95,62 +99,96 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		//mana.tileClicked(e.getX(), e.getY());
-		JLabel label = (JLabel) e.getSource();
-		for (int i = 0; i < tiles.length; i++) {
-			if(tiles[i].label == label) {
-				activeTile = tiles[i];
-				if(tiles[i].type == BOMB && !tiles[i].clicked) {
-					tiles[i].label.setText("Bomb");
-					tiles[i].clicked = true;
-					tiles[i].label.setOpaque(true);
-					tiles[i].label.setBackground(red);
-					repaint();
-					//totalBombs++;
-				}
-				else if(tiles[i].type != BOMB && !tiles[i].clicked) {
-					if((tiles[i].row + tiles[i].col>0) && (tiles[i-1].row == tiles[i].row) && (tiles[i-1].type == BOMB)) {
-						tiles[i].bombsAround++;
-					}
-					if(tiles[i].row+1 + tiles[i].col+1<Minesweeper.SIDES*2 && tiles[i+1].type == BOMB) {
-						tiles[i].bombsAround++;
-					}
-					if(tiles[i].row > 0 && tiles[i-Minesweeper.SIDES].type == BOMB) {
-						tiles[i].bombsAround++;
-					}
-					if(tiles[i].row>0 && tiles[i].col>0 && tiles[i-1-Minesweeper.SIDES].type == BOMB) {
-						tiles[i].bombsAround++;
-					}
-					if(tiles[i].col<Minesweeper.SIDES && tiles[i].row>0 && tiles[i+1-Minesweeper.SIDES].type == BOMB) {
-						tiles[i].bombsAround++;
-					}
-					if(tiles[i].row+1<Minesweeper.SIDES && tiles[i].col>0 && tiles[i-1+Minesweeper.SIDES].type == BOMB) {
-						tiles[i].bombsAround++;
-					}
-					if( tiles[i].row+1<Minesweeper.SIDES && tiles[i+Minesweeper.SIDES].type == BOMB) {
-						tiles[i].bombsAround++;
-					}
-					if(tiles[i].row+1<Minesweeper.SIDES && tiles[i].col+1<Minesweeper.SIDES && tiles[i+1+Minesweeper.SIDES].type == BOMB) {
-						tiles[i].bombsAround++;
-					}
-					if(tiles[i].bombsAround>0) {
-						tiles[i].label.setText("" + tiles[i].bombsAround);
+		if(e.getButton() == MouseEvent.BUTTON1) {
+			JLabel label = (JLabel) e.getSource();
+			for (int i = 0; i < tiles.length; i++) {
+				if(tiles[i].label == label) {
+					System.out.println(label);
+					activeTile = tiles[i];
+					if(tiles[i].type == BOMB && !tiles[i].clicked) {
+						tiles[i].label.setText("Bomb");
+						tiles[i].clicked = true;
 						tiles[i].label.setOpaque(true);
-						tiles[i].label.setBackground(dirt);
+						tiles[i].label.setBackground(red);
 						repaint();
+						//totalBombs++;
 					}
-					if(tiles[i].bombsAround==0) {
-						tiles[i].label.setOpaque(true);
-						tiles[i].label.setBackground(dirt);
-						repaint();
+					else if(tiles[i].type != BOMB && !tiles[i].clicked) {
+						if((tiles[i].row + tiles[i].col>0) && (tiles[i-1].row == tiles[i].row) && (tiles[i-1].type == BOMB)) {
+							tiles[i].bombsAround++;
+						}
+						if(tiles[i].row+1 + tiles[i].col+1<Minesweeper.SIDES*2 && tiles[i+1].type == BOMB) {
+							tiles[i].bombsAround++;
+						}
+						if(tiles[i].row > 0 && tiles[i-Minesweeper.SIDES].type == BOMB) {
+							tiles[i].bombsAround++;
+						}
+						if(tiles[i].row>0 && tiles[i].col>0 && tiles[i-1-Minesweeper.SIDES].type == BOMB) {
+							tiles[i].bombsAround++;
+						}
+						if(tiles[i].col<Minesweeper.SIDES && tiles[i].row>0 && tiles[i+1-Minesweeper.SIDES].type == BOMB) {
+							tiles[i].bombsAround++;
+						}
+						if(tiles[i].row+1<Minesweeper.SIDES && tiles[i].col>0 && tiles[i-1+Minesweeper.SIDES].type == BOMB) {
+							tiles[i].bombsAround++;
+						}
+						if( tiles[i].row+1<Minesweeper.SIDES && tiles[i+Minesweeper.SIDES].type == BOMB) {
+							tiles[i].bombsAround++;
+						}
+						if(tiles[i].row+1<Minesweeper.SIDES && tiles[i].col+1<Minesweeper.SIDES && tiles[i+1+Minesweeper.SIDES].type == BOMB) {
+							tiles[i].bombsAround++;
+						}
+						if(tiles[i].bombsAround>0) {
+							tiles[i].label.setText("" + tiles[i].bombsAround);
+							tiles[i].label.setOpaque(true);
+							tiles[i].label.setBackground(dirt);
+							repaint();
+						}
+						if(tiles[i].bombsAround==0) {
+							tiles[i].label.setOpaque(true);
+							tiles[i].label.setBackground(dirt);
+							repaint();
+						}
+						tiles[i].clicked = true;
 					}
-					tiles[i].clicked = true;
+					
+					
 				}
-				
 				
 			}
-			
+			//System.out.println(activeTile.label.getText());
 		}
-		System.out.println(activeTile.label.getText());
+		if( e.getButton() == MouseEvent.BUTTON3) {
+			JLabel label = (JLabel) e.getSource();
+			for (int i = 0; i < tiles.length; i++) {
+				if(tiles[i].label == label) {
+					if(!tiles[i].flagged && !tiles[i].clicked) {
+						tiles[i].label.setOpaque(true);
+						tiles[i].label.setBackground(Color.orange);
+						tiles[i].flagged = true;
+						if(tiles[i].type == 1) {
+							totalBombs--;
+							System.out.println(totalBombs);
+							if(totalBombs == 0) {
+								JOptionPane.showMessageDialog(null, "Congratulations, You Win!");
+							}
+						}
+					}
+					else if(tiles[i].flagged && !tiles[i].clicked) {
+						tiles[i].label.setOpaque(true);
+						tiles[i].label.setBackground(grass);
+						tiles[i].flagged = false;
+						if(tiles[i].type == 1) {
+							totalBombs++;
+						}
+					}
+				}
+			}
+				
+		}
+		
+		
+		
 	}
 
 	@Override
