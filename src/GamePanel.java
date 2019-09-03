@@ -22,7 +22,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	Tile[] tiles = new Tile[Minesweeper.SIDES*Minesweeper.SIDES];
 	Tile activeTile;
 	static final int BOMB = 1;
-	Border border = BorderFactory.createLineBorder(Color.BLACK);
+	Border border = BorderFactory.createLineBorder(Color.GRAY);
 	Color grass = new Color(102, 209, 73);
 	Color dirt = new Color(207, 131, 91);
 	Color red = new Color(255,0,0);
@@ -30,6 +30,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	JLabel label;
 	JLabel label2;
 	int totalBombs;
+	boolean valuesAssigned = false;
 	
 	
 	//Constructor
@@ -39,9 +40,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 		//add(label = new JLabel("Total Bombs: " + totalBombs));
 		JPanel panel = new JPanel();
 		setLayout(new GridLayout(Minesweeper.SIDES, Minesweeper.SIDES));
-		int tile = 0;
 		totalBombs = 0;
-		
+		int tile = 0;
 		for (int row = 0; row < Minesweeper.SIDES; row++) {
 			for (int col = 0; col < Minesweeper.SIDES; col++) {
 				tiles[tile] = new Tile(rand.nextInt(6), row, col);
@@ -110,23 +110,25 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 						tiles[i].clicked = true;
 						tiles[i].label.setOpaque(true);
 						tiles[i].label.setBackground(red);
+						JOptionPane.showMessageDialog(null, "You Lost!");
+						System.exit(0);
 						repaint();
 						//totalBombs++;
 					}
 					else if(tiles[i].type != BOMB && !tiles[i].clicked) {
-						if((tiles[i].row + tiles[i].col>0) && (tiles[i-1].row == tiles[i].row) && (tiles[i-1].type == BOMB)) {
+						if((tiles[i].row + tiles[i].col>0) && (tiles[i-1].row == tiles[i].row) && (tiles[i-1].type == BOMB)) { 
 							tiles[i].bombsAround++;
 						}
-						if(tiles[i].row+1 + tiles[i].col+1<Minesweeper.SIDES*2 && tiles[i+1].type == BOMB) {
+						if(tiles[i].row+1 + tiles[i].col+1<Minesweeper.SIDES*2 && (tiles[i+1].row == tiles[i].row) && tiles[i+1].type == BOMB) { //Tile directly to the right
 							tiles[i].bombsAround++;
 						}
-						if(tiles[i].row > 0 && tiles[i-Minesweeper.SIDES].type == BOMB) {
+						if(tiles[i].row > 0 && tiles[i-Minesweeper.SIDES].type == BOMB) { //Directly above clicked tile
 							tiles[i].bombsAround++;
 						}
-						if(tiles[i].row>0 && tiles[i].col>0 && tiles[i-1-Minesweeper.SIDES].type == BOMB) {
+						if(tiles[i].row>0 && tiles[i].col>0 && tiles[i-1-Minesweeper.SIDES].type == BOMB) { //Above and to the left of clicked tile
 							tiles[i].bombsAround++;
 						}
-						if(tiles[i].col<Minesweeper.SIDES && tiles[i].row>0 && tiles[i+1-Minesweeper.SIDES].type == BOMB) {
+						if(tiles[i].col<Minesweeper.SIDES && tiles[i].row>0 && (tiles[i-Minesweeper.SIDES+1].row != tiles[i].row) && tiles[i+1-Minesweeper.SIDES].type == BOMB) { //Above and to the right of clicked tile
 							tiles[i].bombsAround++;
 						}
 						if(tiles[i].row+1<Minesweeper.SIDES && tiles[i].col>0 && tiles[i-1+Minesweeper.SIDES].type == BOMB) {
@@ -214,5 +216,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 
+	
 }
