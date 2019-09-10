@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,9 +9,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URL;
 import java.util.Random;
 
+
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,7 +24,7 @@ import javax.swing.border.Border;
 public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseListener {
 	
 	TileManager mana;
-	Tile[] tiles = new Tile[Minesweeper.SIDES*Minesweeper.SIDES];
+	Tile[] tiles;
 	Tile activeTile;
 	static final int BOMB = 1;
 	Border border = BorderFactory.createLineBorder(Color.GRAY);
@@ -31,13 +36,22 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	JLabel label2;
 	int totalBombs;
 	boolean valuesAssigned = false;
+	URL imageURL = getClass().getResource("redFlag.png");
+	ImageIcon flag = new ImageIcon(imageURL);
+	
 	
 	
 	//Constructor
 	public GamePanel() {
 		//mana = new TileManager();
-		
+		buildGrid();
 		//add(label = new JLabel("Total Bombs: " + totalBombs));
+		
+	}
+	
+	public void buildGrid() {
+		
+		tiles = new Tile[Minesweeper.SIDES*Minesweeper.SIDES];
 		JPanel panel = new JPanel();
 		setLayout(new GridLayout(Minesweeper.SIDES, Minesweeper.SIDES));
 		totalBombs = 0;
@@ -61,6 +75,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 			}
 		}
 		System.out.println(totalBombs);
+		
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -110,9 +125,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 						tiles[i].clicked = true;
 						tiles[i].label.setOpaque(true);
 						tiles[i].label.setBackground(red);
-						JOptionPane.showMessageDialog(null, "You Lost!");
-						System.exit(0);
-						repaint();
+						int quit = JOptionPane.showOptionDialog(null, "You Lost! Would you like to restart?", "Game Over", 0, JOptionPane.INFORMATION_MESSAGE, null,new String[]{"Restart","Quit"},null);
+						System.out.println(quit);
+						
+						if(quit==0) {
+							removeAll();
+							buildGrid();
+							
+						}
+						else {
+							System.exit(0);
+						}
 						//totalBombs++;
 					}
 					else if(tiles[i].type != BOMB && !tiles[i].clicked) {
@@ -165,8 +188,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 			for (int i = 0; i < tiles.length; i++) {
 				if(tiles[i].label == label) {
 					if(!tiles[i].flagged && !tiles[i].clicked) {
-						tiles[i].label.setOpaque(true);
-						tiles[i].label.setBackground(Color.orange);
+						
+						//tiles[i].label.setOpaque(true);
+						//tiles[i].label.setBackground(Color.orange);
+						tiles[i].label.setIcon(flag);
+						repaint();
 						tiles[i].flagged = true;
 						if(tiles[i].type == 1) {
 							totalBombs--;
@@ -177,6 +203,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 						}
 					}
 					else if(tiles[i].flagged && !tiles[i].clicked) {
+						label.setIcon(null);
 						tiles[i].label.setOpaque(true);
 						tiles[i].label.setBackground(grass);
 						tiles[i].flagged = false;
