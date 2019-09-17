@@ -2,4 +2,4 @@
 created by Sam Kahn
 
 Download link: 
-https://github.com/League-level2-student/league-level2-game-GaynorGithub/blob/master/Minesweeper.jar?raw=true
+<a href="https://github.com/League-level2-student/league-level2-game-GaynorGithub/blob/master/Minesweeper.jar?raw=true">Click here to play my awesome game!</a>
